@@ -7,7 +7,8 @@ import numpy as np;
 path_images = os.path.abspath(os.path.join(os.path.dirname('dehaze.py'), os.path.pardir))
 path_city_fog = path_images + '\\images\\city_fog.png'
 path_square_fog = path_images + '\\images\\square_fog.jpg'
-
+path_tiananmen = path_images + '\\images\\tiananmen.png'
+path_canon3 = path_images + '\\images\\canon3.bmp'
 
 def DarkChannel(im, sz):
     b, g, r = cv2.split(im)
@@ -91,7 +92,7 @@ if __name__ == '__main__':
     try:
         fn = sys.argv[1]
     except:
-        fn = path_city_fog
+        fn = path_canon3
 
 
     def nothing(*argv):
