@@ -47,7 +47,7 @@ class MainWin(QWidget):
 
     def initUI(self):
         # 设置窗口的位置和大小
-        self.setGeometry(300, 300, 900, 600)
+        self.setGeometry(300, 300, 1000, 400)
         # 设置窗口的标题
         self.setWindowTitle('Dehaze software')
         # 设置窗口的图标，引用当前目录下的web.png图片
@@ -57,25 +57,25 @@ class MainWin(QWidget):
         self.DispLb1 = QLabel('Zetcode1', self)
         self.DispLb.move(0, 0)
         self.DispLb1.move(500, 0)
-        self.DispLb1.setFixedSize(400, 350)
+        self.DispLb1.setFixedSize(500, 350)
         self.DispLb.setFixedSize(500, 350)
 
         # button
         self.btnSave = QPushButton('Upload File', self)
         self.btnSave.clicked.connect(self.openimage)
         self.btnSave.setCheckable(True)
-        self.btnSave.move(100, 480)
+        self.btnSave.move(200, 360)
 
         self.btnSave2 = QPushButton('haze removal ', self)
         self.btnSave2.clicked.connect(self.showDarkChannel)
         self.btnSave2.setCheckable(True)
-        self.btnSave2.move(300, 480)
+        self.btnSave2.move(450, 360)
 
 
         self.btnSave3 = QPushButton('FFA removal', self)
         self.btnSave3.clicked.connect(self.showFFA)
         self.btnSave3.setCheckable(True)
-        self.btnSave3.move(500, 480)
+        self.btnSave3.move(700, 360)
 
         # 显示窗口
         self.show()
