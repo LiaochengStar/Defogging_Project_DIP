@@ -38,11 +38,11 @@ class MainWin(QWidget):
         print(value)
     def showDarkChannel(self):
         imgName, imgType = QFileDialog.getOpenFileName(self, "打开图片", "", "*.jpg;;*.png;;All Files(*)")
-        jpg = QtGui.QPixmap(imgName).scaled(self.DispLb.width(), self.DispLb.height())
+        jpg = QtGui.QPixmap(imgName).scaled(self.DispLb1.width(), self.DispLb1.height())
         self.DispLb1.setPixmap(jpg)
     def showFFA(self):
         imgName, imgType = QFileDialog.getOpenFileName(self, "打开图片", "", "*.jpg;;*.png;;All Files(*)")
-        jpg = QtGui.QPixmap(imgName).scaled(self.DispLb.width(), self.DispLb.height())
+        jpg = QtGui.QPixmap(imgName).scaled(self.DispLb1.width(), self.DispLb1.height())
         self.DispLb1.setPixmap(jpg)
 
     def initUI(self):
