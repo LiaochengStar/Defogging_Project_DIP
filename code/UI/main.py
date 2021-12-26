@@ -1,7 +1,3 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
-
 import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QSlider, QPushButton, QFileDialog
@@ -17,11 +13,6 @@ class MainWin(QWidget):
         super().__init__()
 
         self.initUI()  # 界面绘制交给InitUi方法
-        # self.timer_camera = QtCore.QTimer()
-        # self.timer_camera.timeout.connect(self.TimerOutFun)
-        # self.timer_camera.start()
-        # self.timer_camera.setInterval(1)
-        # self.camera = cv2.VideoCapture(0)
 
     def ShowImage(self):
         img = cv2.imread("img.png")
@@ -45,8 +36,15 @@ class MainWin(QWidget):
         self.DispLb.setPixmap(jpg)
     def ChangeMaxArgValue(self, value):
         print(value)
-    def printf(self):
-        print("on click")
+    def showDarkChannel(self):
+        imgName, imgType = QFileDialog.getOpenFileName(self, "打开图片", "", "*.jpg;;*.png;;All Files(*)")
+        jpg = QtGui.QPixmap(imgName).scaled(self.DispLb.width(), self.DispLb.height())
+        self.DispLb1.setPixmap(jpg)
+    def showFFA(self):
+        imgName, imgType = QFileDialog.getOpenFileName(self, "打开图片", "", "*.jpg;;*.png;;All Files(*)")
+        jpg = QtGui.QPixmap(imgName).scaled(self.DispLb.width(), self.DispLb.height())
+        self.DispLb1.setPixmap(jpg)
+
     def initUI(self):
         # 设置窗口的位置和大小
         self.setGeometry(300, 300, 900, 600)
@@ -68,9 +66,16 @@ class MainWin(QWidget):
         self.btnSave.setCheckable(True)
         self.btnSave.move(100, 480)
 
-        self.btnSave2 = QPushButton('Dd DeHaze', self)
+        self.btnSave2 = QPushButton('haze removal ', self)
+        self.btnSave2.clicked.connect(self.showDarkChannel)
         self.btnSave2.setCheckable(True)
         self.btnSave2.move(300, 480)
+
+
+        self.btnSave3 = QPushButton('FFA removal', self)
+        self.btnSave3.clicked.connect(self.showFFA)
+        self.btnSave3.setCheckable(True)
+        self.btnSave3.move(500, 480)
 
         # 显示窗口
         self.show()
