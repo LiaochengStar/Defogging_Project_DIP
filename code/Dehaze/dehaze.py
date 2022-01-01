@@ -86,8 +86,8 @@ if __name__ == '__main__':
     try:
         fn = sys.argv[1]
     except:
-        fn = '../../images/square_fog.jpg'
-
+        fn = '../../images/city_fog.png'
+#../../images/city_fog.png ../../images/square_fog.jpg
 
     def nothing(*argv):
         pass

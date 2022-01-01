@@ -1,8 +1,8 @@
 import cv2 as cv
 import numpy as np
-from matplotlib import pyplot as plt
 
-test = cv.imread("square_fog.jpeg", -1)
+
+test = cv.imread("../../images/city_fog.bmp", -1)
 
 B, G, R = cv.split(test)  # get single 8-bits channel
 EB = cv.equalizeHist(B)

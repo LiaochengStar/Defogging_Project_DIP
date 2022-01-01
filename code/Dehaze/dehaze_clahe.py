@@ -1,6 +1,6 @@
 # -*- coding: utf-8  -*-
 import cv2
-image=cv2.imread("square_fog.jpeg")
+image=cv2.imread("../../images/city_fog.png")
 b,g,r = cv2.split(image)
 clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
 b = clahe.apply(b)

@@ -4,8 +4,8 @@ import cv2
 import math
 import numpy as np
 
-def DarkChannel(im,sky_img, sz,t=0.1):
-    print(sky_img)
+def DarkChannel(im,sky_img, sz,t=4):
+
     h,w=sky_img.shape
     dc=np.zeros([h,w])
     for i in range(h):
@@ -22,6 +22,7 @@ def DarkChannel(im,sky_img, sz,t=0.1):
 def getSkyImg(process_image):
     imGray = cv2.cvtColor(process_image, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(imGray, 20, 100)
+    cv2.imshow("edges", edges)
     row, column = edges.shape
     sky_image = np.ones([row, column])
     scene_image = np.zeros([row, column])
@@ -115,7 +116,7 @@ if __name__ == '__main__':
     try:
         fn = sys.argv[1]
     except:
-        fn = '../../images/city_fog.png'
+        fn = '../../images/square_fog.jpg'
 
 
     def nothing(*argv):
@@ -124,7 +125,8 @@ if __name__ == '__main__':
 
     src = cv2.imread(fn)
     sky_image=getSkyImg(src)
-    print(sky_image.shape)
+
+    cv2.imshow("sky", sky_image)
     I = src.astype('float64') / 255
 
     dark = DarkChannel(I,sky_image, 15)
