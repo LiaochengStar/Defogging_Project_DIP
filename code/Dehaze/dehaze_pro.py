@@ -4,17 +4,17 @@ import cv2
 import math
 import numpy as np
 
-def DarkChannel(im,sky_img, sz,t=4):
+def DarkChannel(img, sky_img, sz, t=4):
 
     h,w=sky_img.shape
-    dc=np.zeros([h,w])
+    dc=np.zeros([h, w])
     for i in range(h):
         for j in range(w):
-            b, g, r = im[i, j, :][0], im[i, j, :][1], im[i, j, :][2]
-            if sky_img[i,j]==1:
-                dc[i,j]=t+min(b,g,r)*(1-t)
+            b, g, r = img[i, j, :][0], img[i, j, :][1], img[i, j, :][2]
+            if sky_img[i, j] == 1:
+                dc[i, j]=t+min(b, g, r)*(1-t)
             else:
-                dc[i,j]=min(b,g,r)
+                dc[i, j]=min(b, g, r)
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (sz, sz))
     dark = cv2.erode(dc, kernel)
     return dark
@@ -42,12 +42,12 @@ def getSkyImg(process_image):
             sky_image[:, c] = line
             scene_image[:, c] = line_
     return sky_image
-def AtmLight(im, dark):
-    [h, w] = im.shape[:2]
+def AtmLight(img, dark):
+    [h, w] = img.shape[:2]
     imsz = h * w
     numpx = int(max(math.floor(imsz / 1000), 1))
     darkvec = dark.reshape(imsz)
-    imvec = im.reshape(imsz, 3)
+    imvec = img.reshape(imsz, 3)
 
     indices = darkvec.argsort()
     indices = indices[imsz - numpx::]
@@ -60,24 +60,24 @@ def AtmLight(im, dark):
     return A
 
 
-def TransmissionEstimate(im, A, sky_image,sz):
+def TransmissionEstimate(img, A, sky_image, sz):
     omega = 0.95
-    im3 = np.empty(im.shape, im.dtype)
+    im3 = np.empty(img.shape, img.dtype)
 
     for ind in range(0, 3):
-        im3[:, :, ind] = im[:, :, ind] / A[0, ind]
+        im3[:, :, ind] = img[:, :, ind] / A[0, ind]
 
     transmission = 1 - omega * DarkChannel(im3, sky_image,sz)
     return transmission
 
 
-def Guidedfilter(im, p, r, eps):
-    mean_I = cv2.boxFilter(im, cv2.CV_64F, (r, r))
+def Guidedfilter(img, p, r, eps):
+    mean_I = cv2.boxFilter(img, cv2.CV_64F, (r, r))
     mean_p = cv2.boxFilter(p, cv2.CV_64F, (r, r))
-    mean_Ip = cv2.boxFilter(im * p, cv2.CV_64F, (r, r))
+    mean_Ip = cv2.boxFilter(img * p, cv2.CV_64F, (r, r))
     cov_Ip = mean_Ip - mean_I * mean_p
 
-    mean_II = cv2.boxFilter(im * im, cv2.CV_64F, (r, r))
+    mean_II = cv2.boxFilter(img * img, cv2.CV_64F, (r, r))
     var_I = mean_II - mean_I * mean_I
 
     a = cov_Ip / (var_I + eps)
@@ -86,12 +86,12 @@ def Guidedfilter(im, p, r, eps):
     mean_a = cv2.boxFilter(a, cv2.CV_64F, (r, r))
     mean_b = cv2.boxFilter(b, cv2.CV_64F, (r, r))
 
-    q = mean_a * im + mean_b
+    q = mean_a * img + mean_b
     return q
 
 
-def TransmissionRefine(im, et):
-    gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+def TransmissionRefine(img, et):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = np.float64(gray) / 255
     r = 60
     eps = 0.0001
@@ -100,12 +100,12 @@ def TransmissionRefine(im, et):
     return t
 
 
-def Recover(im, t, A, tx=0.1):
-    res = np.empty(im.shape, im.dtype)
+def Recover(img, t, A, tx=0.1):
+    res = np.empty(img.shape, img.dtype)
     t = cv2.max(t, tx)
 
     for ind in range(0, 3):
-        res[:, :, ind] = (im[:, :, ind] - A[0, ind]) / t + A[0, ind]
+        res[:, :, ind] = (img[:, :, ind] - A[0, ind]) / t + A[0, ind]
 
     return res
 
@@ -117,27 +117,22 @@ if __name__ == '__main__':
         fn = sys.argv[1]
     except:
         fn = '../../images/square_fog.jpg'
-
-
     def nothing(*argv):
         pass
 
 
     src = cv2.imread(fn)
     sky_image=getSkyImg(src)
-
-    cv2.imshow("sky", sky_image)
     I = src.astype('float64') / 255
-
-    dark = DarkChannel(I,sky_image, 15)
+    dark = DarkChannel(I, sky_image, 15)
     A = AtmLight(I, dark)
-    te = TransmissionEstimate(I, A,sky_image, 15)
+    te = TransmissionEstimate(I, A, sky_image, 15)
     t = TransmissionRefine(src, te)
     J = Recover(I, t, A, 0.1)
     #
     cv2.imshow("dark", dark)
     cv2.imshow("t", t)
+    cv2.imshow("sky", sky_image)
     cv2.imshow('I', src)
     cv2.imshow('J', J)
-    cv2.imwrite("./image/J.png", J * 255)
     cv2.waitKey()
